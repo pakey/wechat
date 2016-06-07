@@ -59,6 +59,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @property \EasyWeChat\Payment\MerchantPay\MerchantPay $merchant_pay
  * @property \EasyWeChat\Reply\Reply                     $reply
  * @property \EasyWeChat\Broadcast\Broadcast             $broadcast
+ * @property \EasyWeChat\Component\Component             $component
  */
 class Application extends Container
 {
@@ -68,6 +69,7 @@ class Application extends Container
      * @var array
      */
     protected $providers = [
+        ServiceProviders\ComponentServiceProvider::class,
         ServiceProviders\ServerServiceProvider::class,
         ServiceProviders\UserServiceProvider::class,
         ServiceProviders\JsServiceProvider::class,
@@ -103,12 +105,13 @@ class Application extends Container
             error_reporting(E_ALL);
         }
 
-        $this->registerProviders();
         $this->registerBase();
+        $this->registerProviders();
         $this->initializeLogger();
 
         Http::setDefaultOptions($this['config']->get('guzzle', ['timeout' => 5.0]));
 
+        //Hide truth app_id secret
         foreach (['app_id', 'secret'] as $key) {
             !isset($config[$key]) || $config[$key] = '***'.substr($config[$key], -5);
         }
@@ -190,7 +193,7 @@ class Application extends Container
     /**
      * Register basic providers.
      */
-    private function registerBase()
+    protected function registerBase()
     {
         $this['request'] = function () {
             return Request::createFromGlobals();
