@@ -50,7 +50,7 @@ class ComponentAccessToken extends AccessToken
      * @param string                       $ticket
      * @param \Doctrine\Common\Cache\Cache $cache
      */
-    public function __construct($appId, $secret, $ticket, Cache $cache = null)
+    public function __construct($appId, $secret, Cache $cache = null, $ticket)
     {
         $this->appId  = $appId;
         $this->secret = $secret;

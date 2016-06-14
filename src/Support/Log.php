@@ -28,6 +28,13 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Class Log.
+ * @method static \Psr\Log\LoggerInterface debug($message, array $context = array())
+ * @method static \Psr\Log\LoggerInterface info($message, array $context = array())
+ * @method static \Psr\Log\LoggerInterface alert($message, array $context = array())
+ * @method static \Psr\Log\LoggerInterface error($message, array $context = array())
+ * @method static \Psr\Log\LoggerInterface warning($message, array $context = array())
+ * @method static \Psr\Log\LoggerInterface notice($message, array $context = array())
+ * @method static \Psr\Log\LoggerInterface log($message, array $context = array())
  */
 class Log
 {

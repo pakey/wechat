@@ -44,14 +44,14 @@ class ComponentServiceProvider implements ServiceProviderInterface{
         $compconentAccessToken=new ComponentAccessToken(
             $pimple['config']['component']['app_id'],
             $pimple['config']['component']['secret'],
-            $pimple['config']['component']['ticket'],
-            $pimple['cache']
+            $pimple['cache'],
+            $pimple['config']['component']['ticket']
         );
         $pimple['access_token']=new AuthorizerAccessToken(
             $pimple['config']['app_id'],
             $pimple['config']['component'],
-            $compconentAccessToken,
-            $pimple['cache']
+            $pimple['cache'],
+            $compconentAccessToken
         );
         
         $pimple['component'] =  new Component($compconentAccessToken);

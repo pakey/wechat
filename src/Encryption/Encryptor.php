@@ -141,6 +141,31 @@ class Encryptor
     }
 
     /**
+     * Decrypt Component message.
+     *
+     * @param string $postXML
+     *
+     * @return array
+     *
+     * @throws EncryptionException
+     */
+    public function decryptComponent($postXML)
+    {
+        try {
+            $array = XML::parse($postXML);
+        } catch (BaseException $e) {
+            throw new EncryptionException('Invalid xml.', EncryptionException::ERROR_PARSE_XML);
+        }
+
+        $encrypted = $array['Encrypt'];
+        if ($this->appId !== $array['AppId']) {
+            throw new EncryptionException('Invalid AppId.', EncryptionException::ERROR_INVALID_APPID);
+        }
+
+        return XML::parse($this->decrypt($encrypted, $this->appId));
+    }
+
+    /**
      * Get SHA1.
      *
      * @return string

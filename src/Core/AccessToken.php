@@ -53,7 +53,7 @@ class AccessToken
     /**
      * Http instance.
      *
-     * @var Http
+     * @var \EasyWeChat\Core\Http
      */
     protected $http;
 
