@@ -158,11 +158,8 @@ class Encryptor
         }
 
         $encrypted = $array['Encrypt'];
-        if ($this->appId !== $array['AppId']) {
-            throw new EncryptionException('Invalid AppId.', EncryptionException::ERROR_INVALID_APPID);
-        }
 
-        return XML::parse($this->decrypt($encrypted, $this->appId));
+        return XML::parse($this->decrypt($encrypted, $array['AppId']));
     }
 
     /**
