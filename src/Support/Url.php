@@ -14,7 +14,6 @@
  *
  * @author    overtrue <i@overtrue.me>
  * @copyright 2015 overtrue <i@overtrue.me>
- *
  * @link      https://github.com/overtrue
  * @link      http://overtrue.me
  */
@@ -25,6 +24,7 @@ namespace EasyWeChat\Support;
  */
 class Url
 {
+
     /**
      * 获取微信使用的url 去除#后面之后的
      *
@@ -32,9 +32,9 @@ class Url
      */
     public static function current()
     {
-        $url=self::full();
-        if(strpos($url,'#')){
-            $url=explode('#',$url)['0'];
+        $url = self::full();
+        if (strpos($url, '#')) {
+            $url = explode('#', $url)['0'];
         }
         return $url;
     }
@@ -46,15 +46,16 @@ class Url
      */
     public static function full()
     {
+        if (PHP_SAPI == 'cli') return '';
         $protocol = (!empty($_SERVER['HTTPS'])
             && $_SERVER['HTTPS'] !== 'off'
             || $_SERVER['SERVER_PORT'] === 443) ? 'https://' : 'http://';
-        if(isset($_SERVER['HTTP_X_FORWARDED_HOST'])){
+        if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
             $host = $_SERVER['HTTP_X_FORWARDED_HOST'];
-        }else{
+        } else {
             $host = $_SERVER['HTTP_HOST'];
         }
-        return $protocol.$host.$_SERVER['REQUEST_URI'];
+        return $protocol . $host . $_SERVER['REQUEST_URI'];
     }
 
 }
