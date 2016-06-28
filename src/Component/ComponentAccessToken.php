@@ -14,7 +14,6 @@
  *
  * @author    overtrue <i@overtrue.me>
  * @copyright 2015 overtrue <i@overtrue.me>
- *
  * @link      https://github.com/overtrue
  * @link      http://overtrue.me
  */
@@ -37,32 +36,38 @@ class ComponentAccessToken extends AccessToken
      */
     protected $ticket;
 
+    /**
+     * @var string
+     */
+    protected $config;
+
     protected $prefix = 'easywechat.component.access_token.';
 
     // API
     const API_TOKEN_GET = 'https://api.weixin.qq.com/cgi-bin/component/api_component_token';
+
 
     /**
      * Constructor.
      *
      * @param string                       $appId
      * @param string                       $secret
-     * @param string                       $ticket
+     * @param string                       $config
      * @param \Doctrine\Common\Cache\Cache $cache
      */
-    public function __construct($appId, $secret, Cache $cache = null, $ticket)
+    public function __construct($appId, $secret, Cache $cache = null, $config)
     {
         $this->appId  = $appId;
         $this->secret = $secret;
-        $this->ticket = $ticket;
+        $this->ticket = $config['component']['ticket'];
         $this->cache  = $cache;
+        $this->config = $config;
     }
 
     /**
      * Get token from WeChat API.
      *
      * @param bool $forceRefresh
-     *
      * @return string
      */
     public function getToken($forceRefresh = false)
@@ -70,10 +75,8 @@ class ComponentAccessToken extends AccessToken
         $cacheKey = $this->prefix . $this->appId;
 
         $cached = $this->getCache()->fetch($cacheKey);
-
         if ($forceRefresh || empty($cached)) {
             $token = $this->getTokenFromServer();
-
             // XXX: T_T... 7200 - 1500
             $this->getCache()->save($cacheKey, $token['component_access_token'], $token['expires_in'] - 1500);
 
@@ -87,7 +90,6 @@ class ComponentAccessToken extends AccessToken
      * Get the access token from WeChat server.
      *
      * @throws \EasyWeChat\Core\Exceptions\HttpException
-     *
      * @return array|bool
      */
     public function getTokenFromServer()
@@ -107,5 +109,19 @@ class ComponentAccessToken extends AccessToken
         }
 
         return $token;
+    }
+    
+    public function getConfig($name,$default=null)
+    {
+        $names=explode('.',$name);
+        $config=$this->config;
+        foreach($names as $name){
+            if(isset($config[$name])){
+                $config=$config[$name];
+            }else{
+                return $default;
+            }
+        }
+        return $config;
     }
 }

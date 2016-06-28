@@ -45,7 +45,7 @@ class ComponentServiceProvider implements ServiceProviderInterface{
             $pimple['config']['component']['app_id'],
             $pimple['config']['component']['secret'],
             $pimple['cache'],
-            $pimple['config']['component']['ticket']
+            $pimple['config']
         );
         $pimple['access_token']=new AuthorizerAccessToken(
             $pimple['config']['app_id'],

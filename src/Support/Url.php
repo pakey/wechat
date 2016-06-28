@@ -26,16 +26,35 @@ namespace EasyWeChat\Support;
 class Url
 {
     /**
-     * Get current url.
+     * 获取微信使用的url 去除#后面之后的
      *
      * @return string
      */
     public static function current()
     {
-        $protocol = (!empty($_SERVER['HTTPS'])
-                        && $_SERVER['HTTPS'] !== 'off'
-                        || $_SERVER['SERVER_PORT'] === 443) ? 'https://' : 'http://';
-
-        return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $url=self::full();
+        if(strpos($url,'#')){
+            $url=explode('#',$url)['0'];
+        }
+        return $url;
     }
+
+    /**
+     * 获取全路径
+     *
+     * @return string
+     */
+    public static function full()
+    {
+        $protocol = (!empty($_SERVER['HTTPS'])
+            && $_SERVER['HTTPS'] !== 'off'
+            || $_SERVER['SERVER_PORT'] === 443) ? 'https://' : 'http://';
+        if(isset($_SERVER['HTTP_X_FORWARDED_HOST'])){
+            $host = $_SERVER['HTTP_X_FORWARDED_HOST'];
+        }else{
+            $host = $_SERVER['HTTP_HOST'];
+        }
+        return $protocol.$host.$_SERVER['REQUEST_URI'];
+    }
+
 }
