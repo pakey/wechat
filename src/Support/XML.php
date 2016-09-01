@@ -91,7 +91,8 @@ class XML
     /**
      * Object to array.
      *
-     * @param string $data
+     *
+     * @param SimpleXMLElement $obj
      *
      * @return array
      */
@@ -100,7 +101,7 @@ class XML
         $result = null;
 
         if (is_object($obj)) {
-            $obj = get_object_vars($obj);
+            $obj = (array) $obj;
         }
 
         if (is_array($obj)) {

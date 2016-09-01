@@ -10,7 +10,7 @@
  */
 
 /**
- * StaffServiceProvider.php.
+ * JsServiceProvider.php.
  *
  * This file is part of the wechat.
  *
@@ -21,15 +21,14 @@
  */
 namespace EasyWeChat\Foundation\ServiceProviders;
 
-use EasyWeChat\Staff\Session;
-use EasyWeChat\Staff\Staff;
+use EasyWeChat\Card\Card;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
 /**
- * Class StaffServiceProvider.
+ * Class JsServiceProvider.
  */
-class StaffServiceProvider implements ServiceProviderInterface
+class CardServiceProvider implements ServiceProviderInterface
 {
     /**
      * Registers services on the given container.
@@ -41,12 +40,11 @@ class StaffServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple)
     {
-        $pimple['staff'] = function ($pimple) {
-            return new Staff($pimple['access_token']);
-        };
+        $pimple['card'] = function ($pimple) {
+            $card = new Card($pimple['access_token']);
+            $card->setCache($pimple['cache']);
 
-        $pimple['staff_session'] = $pimple['staff.session'] = function ($pimple) {
-            return new Session($pimple['access_token']);
+            return $card;
         };
     }
 }

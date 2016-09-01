@@ -94,6 +94,7 @@ class API extends AbstractAPI
     public function prepare(Order $order)
     {
         $order->notify_url = $order->get('notify_url', $this->merchant->notify_url);
+        $order->spbill_create_ip = ($order->trade_type === Order::NATIVE) ? get_server_ip() : get_client_ip();
 
         return $this->request(self::API_PREPARE_ORDER, $order->all());
     }
@@ -220,7 +221,7 @@ class API extends AbstractAPI
         $refundFee = null,
         $opUserId = null
         ) {
-        return $this->refund($orderNo, $refundNo, $totalFee, $refundFee, $opUserId, self::TRANSCATION_ID);
+        return $this->refund($orderNo, $refundNo, $totalFee, $refundFee, $opUserId, self::TRANSACTION_ID);
     }
 
     /**
@@ -373,7 +374,7 @@ class API extends AbstractAPI
      * @param array  $params
      * @param string $method
      * @param array  $options
-     * @param bool   $options
+     * @param bool   $returnResponse
      *
      * @return \EasyWeChat\Support\Collection|\Psr\Http\Message\ResponseInterface
      */
@@ -417,7 +418,7 @@ class API extends AbstractAPI
     /**
      * Parse Response XML to array.
      *
-     * @param string|\Psr\Http\Message\ResponseInterface $response
+     * @param ResponseInterface $response
      *
      * @return \EasyWeChat\Support\Collection
      */
