@@ -22,6 +22,7 @@ namespace EasyWeChat\Payment;
 
 use EasyWeChat\Support\Attribute;
 
+
 /**
  * Class Order.
  */

@@ -380,20 +380,18 @@ class API extends AbstractAPI
     protected function request($api, array $params, $method = 'post', array $options = [], $returnResponse = false)
     {
         $params = array_merge($params, $this->merchant->only(['sub_appid', 'sub_mch_id']));
-
         $params['appid'] = $this->merchant->app_id;
         $params['mch_id'] = $this->merchant->merchant_id;
         $params['device_info'] = $this->merchant->device_info;
         $params['nonce_str'] = uniqid();
         $params = array_filter($params);
         $params['sign'] = generate_sign($params, $this->merchant->key, 'md5');
-
+    
         $options = array_merge([
             'body' => XML::build($params),
         ], $options);
 
         $response = $this->getHttp()->request($api, $method, $options);
-
         return $returnResponse ? $response : $this->parseResponse($response);
     }
 

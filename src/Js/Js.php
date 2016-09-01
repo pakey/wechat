@@ -14,7 +14,6 @@
  *
  * @author    overtrue <i@overtrue.me>
  * @copyright 2015 overtrue <i@overtrue.me>
- *
  * @link      https://github.com/overtrue
  * @link      http://overtrue.me
  */
@@ -31,30 +30,31 @@ use EasyWeChat\Support\Url as UrlHelper;
  */
 class Js extends AbstractAPI
 {
+    
     /**
      * Cache.
      *
      * @var Cache
      */
     protected $cache;
-
+    
     /**
      * Current URI.
      *
      * @var string
      */
     protected $url;
-
+    
     /**
      * Ticket cache prefix.
      */
     const TICKET_CACHE_PREFIX = 'overtrue.wechat.jsapi_ticket.';
-
+    
     /**
      * Api of ticket.
      */
     const API_TICKET = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
-
+    
     /**
      * Get config json for jsapi.
      *
@@ -62,36 +62,35 @@ class Js extends AbstractAPI
      * @param bool  $debug
      * @param bool  $beta
      * @param bool  $json
-     *
+     * @param string $url
      * @return array|string
      */
-    public function config(array $APIs, $debug = false, $beta = false, $json = true)
+    public function config(array $APIs, $debug = false, $beta = false, $json = true, $url = null)
     {
-        $signPackage = $this->signature();
-
-        $base = [
-                 'debug' => $debug,
-                 'beta' => $beta,
-                ];
+        $signPackage = $this->signature($url);
+        
+        $base   = [
+            'debug' => $debug,
+            'beta'  => $beta,
+        ];
         $config = array_merge($base, $signPackage, ['jsApiList' => $APIs]);
-
+        
         return $json ? json_encode($config) : $config;
     }
-
+    
     /**
      * Return jsapi config as a PHP array.
      *
      * @param array $APIs
      * @param bool  $debug
      * @param bool  $beta
-     *
      * @return array
      */
     public function getConfigArray(array $APIs, $debug = false, $beta = false)
     {
         return $this->config($APIs, $debug, $beta, false);
     }
-
+    
     /**
      * Get jsticket.
      *
@@ -99,46 +98,45 @@ class Js extends AbstractAPI
      */
     public function ticket()
     {
-        $key = self::TICKET_CACHE_PREFIX.$this->getAccessToken()->getAppId();
-
+        $key = self::TICKET_CACHE_PREFIX . $this->getAccessToken()->getAppId();
+        
         if ($ticket = $this->getCache()->fetch($key)) {
             return $ticket;
         }
-
+        
         $result = $this->parseJSON('get', [self::API_TICKET, ['type' => 'jsapi']]);
-
+        
         $this->getCache()->save($key, $result['ticket'], $result['expires_in'] - 500);
-
+        
         return $result['ticket'];
     }
-
+    
     /**
      * Build signature.
      *
      * @param string $url
      * @param string $nonce
      * @param int    $timestamp
-     *
      * @return array
      */
     public function signature($url = null, $nonce = null, $timestamp = null)
     {
-        $url = $url ? $url : $this->getUrl();
-        $nonce = $nonce ? $nonce : Str::quickRandom(10);
+        $url       = $url ? $url : $this->getUrl();
+        $nonce     = $nonce ? $nonce : Str::quickRandom(10);
         $timestamp = $timestamp ? $timestamp : time();
-        $ticket = $this->ticket();
-
+        $ticket    = $this->ticket();
+        
         $sign = [
-                 'appId' => $this->getAccessToken()->getAppId(),
-                 'nonceStr' => $nonce,
-                 'timestamp' => $timestamp,
-                 'url' => $url,
-                 'signature' => $this->getSignature($ticket, $nonce, $timestamp, $url),
-                ];
-
+            'appId'     => $this->getAccessToken()->getAppId(),
+            'nonceStr'  => $nonce,
+            'timestamp' => $timestamp,
+            'url'       => $url,
+            'signature' => $this->getSignature($ticket, $nonce, $timestamp, $url),
+        ];
+        
         return $sign;
     }
-
+    
     /**
      * Sign the params.
      *
@@ -146,28 +144,26 @@ class Js extends AbstractAPI
      * @param string $nonce
      * @param int    $timestamp
      * @param string $url
-     *
      * @return string
      */
     public function getSignature($ticket, $nonce, $timestamp, $url)
     {
         return sha1("jsapi_ticket={$ticket}&noncestr={$nonce}&timestamp={$timestamp}&url={$url}");
     }
-
+    
     /**
      * Set current url.
      *
      * @param string $url
-     *
      * @return Js
      */
     public function setUrl($url)
     {
         $this->url = $url;
-
+        
         return $this;
     }
-
+    
     /**
      * Get current url.
      *
@@ -178,24 +174,23 @@ class Js extends AbstractAPI
         if ($this->url) {
             return $this->url;
         }
-
+        
         return UrlHelper::current();
     }
-
+    
     /**
      * Set cache manager.
      *
      * @param \Doctrine\Common\Cache\Cache $cache
-     *
      * @return $this
      */
     public function setCache(Cache $cache)
     {
         $this->cache = $cache;
-
+        
         return $this;
     }
-
+    
     /**
      * Return cache manager.
      *
