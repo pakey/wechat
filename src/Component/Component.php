@@ -126,6 +126,7 @@ class Component extends AbstractAPI
         } else {
             $url = $this->getAuthUrl();
             header('location:' . $url);
+            exit;
         }
     }
 
