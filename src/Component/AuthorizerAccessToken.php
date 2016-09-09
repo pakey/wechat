@@ -106,11 +106,10 @@ class AuthorizerAccessToken extends AccessToken
             'authorizer_refresh_token' => $this->componectConfig['refresh_token'],
         ];
 
-
         $http = $this->getHttp();
 
         $token = $http->parseJSON($http->json(self::API_TOKEN_GET . '?component_access_token=' . $this->compconentAccessToken->getToken(), $params));
-
+        
         if (empty($token['authorizer_access_token'])) {
             throw new HttpException('Request AccessToken fail. response: ' . json_encode($token, JSON_UNESCAPED_UNICODE));
         }

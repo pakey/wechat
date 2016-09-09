@@ -95,7 +95,7 @@ class API extends AbstractAPI
     {
         $order->notify_url = $order->get('notify_url', $this->merchant->notify_url);
         $order->spbill_create_ip = ($order->trade_type === Order::NATIVE) ? get_server_ip() : get_client_ip();
-
+        
         return $this->request(self::API_PREPARE_ORDER, $order->all());
     }
 
@@ -387,7 +387,6 @@ class API extends AbstractAPI
         $params['nonce_str'] = uniqid();
         $params = array_filter($params);
         $params['sign'] = generate_sign($params, $this->merchant->key, 'md5');
-    
         $options = array_merge([
             'body' => XML::build($params),
         ], $options);
